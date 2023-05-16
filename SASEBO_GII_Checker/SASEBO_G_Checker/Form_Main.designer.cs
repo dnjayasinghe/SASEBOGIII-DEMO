@@ -48,6 +48,7 @@ namespace SASEBO_G_Checker
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.SuspendLayout();
@@ -260,11 +261,22 @@ namespace SASEBO_G_Checker
             this.numericUpDown1.TabIndex = 112;
             this.numericUpDown1.ValueChanged += new System.EventHandler(this.numericUpDown1_ValueChanged);
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(455, 161);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(89, 17);
+            this.label1.TabIndex = 113;
+            this.label1.Text = "Offset Adjust";
+            this.label1.Click += new System.EventHandler(this.label1_Click);
+            // 
             // Form_Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1559, 422);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.numericUpDown1);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.chart1);
@@ -317,6 +329,7 @@ namespace SASEBO_G_Checker
         private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.Label label1;
         //     private System.Windows.Forms.Label Delay;
         //     private System.Windows.Forms.TextBox tb_Delay;
     }

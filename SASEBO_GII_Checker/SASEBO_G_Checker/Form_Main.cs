@@ -235,5 +235,6 @@ namespace SASEBO_G_Checker
         {
             manager.set_delay((int)numericUpDown1.Value);
         }
+
     }
 }
