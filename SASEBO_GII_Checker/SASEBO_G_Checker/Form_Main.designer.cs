@@ -269,7 +269,7 @@ namespace SASEBO_G_Checker
             this.label1.Size = new System.Drawing.Size(89, 17);
             this.label1.TabIndex = 113;
             this.label1.Text = "Offset Adjust";
-            this.label1.Click += new System.EventHandler(this.label1_Click);
+           // this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // Form_Main
             // 
