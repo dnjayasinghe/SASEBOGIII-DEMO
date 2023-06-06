@@ -186,6 +186,7 @@ namespace SASEBO_G_Checker
             // chart1.Series.Add("1");
             // string[] seriesArray = { "Cat", "Dog", "Bird", "Monkey" };
             //int[] pointsArray = { 2, 1, 7, 5 };
+           // series1.Points.Invalidate();
             series1.Points.Clear();
             //float[] values = { 0, 70, 90, 20, 70, 220, 30, 60, 30, 81, 10, 39, 0, 70, 90, 20, 70, 220, 30, 60, 30, 81, 10, 39, 0, 70, 90, 20, 70, 220, 30, 60, 30, 81, 10, 39, 0, 70, 90, 20, 70, 220, 30, 60, 30, 81, 10, 39 };
 
