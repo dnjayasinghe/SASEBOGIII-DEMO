@@ -90,40 +90,45 @@ namespace SASEBO_G_Checker
 
       private static int[] hamming_table;
 
-      List<ushort>[] wave = new List<ushort>[1024];  //List<int>[] a = new List<int>[100];
-        List<byte> cipher = new List<byte>();
+      List<int>[] wave = new List<int>[1024];  //List<int>[] a = new List<int>[100];
+      List<int>[] waveTemp = new List<int>[1024];
+
+      List<byte> cipher = new List<byte>();
+      List<byte> cipherTemp = new List<byte>();
 
 
-      List<int>[] cipherHD = new List<int>[256];
-      List<float> cipherDST = new List<float>();
+        List<int>[] cipherHD = new List<int>[256];
+        List<float>[] cipherDST = new List<float>[256];
 
       List<float>[] waveDST = new List<float>[1024];
-      
+        double[] corrCoe = new double[256];
 
+        int waveLowLim  = 100;
+        int waveUpLim   = 200;
 
         //************************************************ Method
         //------------------------------------------------ Constructor
-        public Controller (CipherModule.IBlockCipher module, int num_trace, string key_st, int samples, bool multipleAES/*, int Delay*/)
-    {
-      this.module    = module;
-	  this.num_trace = num_trace;
-      //this.Delay = Delay;
-	  this.samples = samples;
-     // this.multipleAES =multipleAES;
+        public Controller(CipherModule.IBlockCipher module, int num_trace, string key_st, int samples, bool multipleAES/*, int Delay*/)
+        {
+            this.module = module;
+            this.num_trace = num_trace;
+            //this.Delay = Delay;
+            this.samples = samples;
+            // this.multipleAES =multipleAES;
 
-       key = new byte[16];
-      for (int i=0; i<16; i++) 
-          key[i] = Convert.ToByte(key_st.Substring(i * 3, 2), 16);
+            key = new byte[16];
+            for (int i = 0; i < 16; i++)
+                key[i] = Convert.ToByte(key_st.Substring(i * 3, 2), 16);
 
-      worker = new BackgroundWorker();
-      worker.WorkerReportsProgress      = true;
-      worker.WorkerSupportsCancellation = true;
-      worker.DoWork += new DoWorkEventHandler(worker_DoWork);
+            worker = new BackgroundWorker();
+            worker.WorkerReportsProgress = true;
+            worker.WorkerSupportsCancellation = true;
+            worker.DoWork += new DoWorkEventHandler(worker_DoWork);
 
-      workerCPA = new BackgroundWorker();
-      workerCPA.WorkerReportsProgress = true;
-      workerCPA.WorkerSupportsCancellation = true;
-      workerCPA.DoWork += new DoWorkEventHandler(worker_DoWorkCPA);
+            workerCPA = new BackgroundWorker();
+            workerCPA.WorkerReportsProgress = true;
+            workerCPA.WorkerSupportsCancellation = true;
+            workerCPA.DoWork += new DoWorkEventHandler(worker_DoWorkCPA);
 
             hamming_table = new int[256];
             for (int i = 0; i < 256; i++)
@@ -138,14 +143,18 @@ namespace SASEBO_G_Checker
 
             for (int i = 0; i < 1024; i++)
             {
-                wave[i]     = new List<ushort>();
-                waveDST[i]  = new List<float>();
-               
+                wave[i] = new List<int>();
+                waveTemp[i] = new List<int>();
+                waveDST[i] = new List<float>();
+
 
             }
             for (int i = 0; i < 256; i++)
+            {
                 cipherHD[i] = new List<int>();
+                cipherDST[i] = new List<float>();
 
+            }
         }
 
 		//************************************************ BackgroudWorker
@@ -206,42 +215,105 @@ namespace SASEBO_G_Checker
             // clean lists;
             double[] cipherMeanArray = new double[256];
             double[] traceMeanArray  = new double[1024];
+           // double[,] cipherDST     = new double[256, cipher.Count];
+           // double[,] waverDST      = new double[1024, cipher.Count];
+            double SumCipher2       = 0;
+            double SumWave2         = 0;
+
+            double[] DevCipher = new double[256];
+            double[] DevWave = new double[1024];
 
             // cipher HD
             for (int key = 0; key < 256; key++)
             {
                 cipherHD[key].Clear();
+                cipherDST[key].Clear();
 
                 for (int index = 0; index < cipher.Count; index++)
-                    cipherHD[key].Add(cipher[index]);   // calculate HD here
+                {
+                    byte st10 = cipher[index];
+                    byte st9 = inv_sbox[cipher[index] ^ key];
+                    cipherHD[key].Add(hamming_table[st9 ^ st10]);   // calculate HD here
+
+                }
+                    
 
                 cipherMeanArray[key] = cipherHD[key].Average();
 
+                SumCipher2           = 0;
+
                 for (int index = 0; index < cipher.Count; index++)
-                    cipherDST[key].  .Add(cipherHD[key,index]- cipherMeanArray[key]);
-
-
+                {
+                    cipherDST[key].Add((float)(cipherHD[key][index] - cipherMeanArray[key]));
+                    SumCipher2          += cipherHD[key][index] * cipherHD[key][index];
+                }
+                DevCipher[key]          = (double)Math.Sqrt((double)SumCipher2 / cipher.Count - cipherMeanArray[key] * cipherMeanArray[key]);
             }
             Console.WriteLine(cipher.Count +"   "+ cipherHD[0].Count);
 
+
             // wave 
 
-            for (int waveindex = 0; waveindex < 1024; waveindex++)
+            for (int waveindex = waveLowLim; waveindex < waveUpLim; waveindex++)
             {
+                traceMeanArray[waveindex] = wave[waveindex].Average();
+                SumWave2 = 0;
+                waveDST[waveindex].Clear();
 
+                for (int index = 0; index < wave[waveindex].Count; index++)
+                {
+                    waveDST[waveindex].Add((float) (wave[waveindex][index] - traceMeanArray[waveindex]));  //
+                    SumWave2 += wave[waveindex][index] * wave[waveindex][index];
 
-
+                }
+                DevWave[waveindex] = (double)Math.Sqrt((double)SumWave2 / wave[waveindex].Count - traceMeanArray[waveindex] * traceMeanArray[waveindex]);
 
             }
 
-            
-            Console.WriteLine("CPA finished");
+            double denomi       =0.0f;
+            double numerator    =0.0f;
+            double corr         =0.0f;
+            for (int key = 0; key < 256; key++)
+            {
+                corrCoe[key] = 0.0f;
+                for (int waveindex = waveLowLim; waveindex < waveUpLim; waveindex++)
+                {
+                    corr = 0.0f;
+
+                    numerator = calcNumerator(waveDST[waveindex], cipherDST[key]);
+                    denomi = DevWave[waveindex] * DevCipher[key];
+                    if (denomi != 0.0f)
+                        corr = Math.Abs(numerator / denomi);
+
+                    if (corrCoe[key] < corr)
+                        corrCoe[key] = corr;
+
+
+                }
+                
+            }
+
+            Console.Write("**"+corrCoe.Max().ToString("0.0000")+"**"  + corrCoe[74].ToString("0.0000") + "    ");
+            for (int key = 0; key < 256; key++)
+                Console.Write(key + "=>" + corrCoe[key].ToString("0.0000") +"   ");
+
+
+                Console.WriteLine("CPA finished");
 
         }
 
+        private double calcNumerator(List<float> wave, List<float> hddst)
+        {
+            double num = 0.0d;
+            for (int i = 0; i < wave.Count; i++)
+            {
+                num += wave[i] * hddst[i];
+            }
+            return num / wave.Count;
+        }
 
 
-    //------------------------------------------------ worker_DoWork()
+        //------------------------------------------------ worker_DoWork()
         private bool mainloop_AES(CipherModule.IBlockCipher hw, CipherTool.IBlockCipher sw, ref int progress)
 	{
       Random rand = new Random();
@@ -311,22 +383,40 @@ namespace SASEBO_G_Checker
            //Debug.Write( "\n");
 
         worker.ReportProgress(progress, (object)(new ControllerReport(loop, text_in, text_out, text_ans, byte_trace)));
-        System.Threading.Thread.Sleep(30);
+        System.Threading.Thread.Sleep(10);
 
                 // update cihper
-                cipher.Add(text_out[0]);
+                cipherTemp.Add(text_out[0]);
 
 
                 // update wave
                 for (int x = 0; x < 1024; x++)
                 {
-                    wave[x].Add(byte_trace[x]);   
+                    waveTemp[x].Add(byte_trace[x]);   
                 }
 
 
-                if (loop%100==0 & loop!=0)
-                    workerCPA.RunWorkerAsync();
+                if (loop % 200 == 0 && loop != 0 && workerCPA.IsBusy==false)
+                {
+                    
 
+                    foreach (var temp in cipherTemp)
+                    {
+                        cipher.Add(temp);
+
+                    }
+                    cipherTemp.Clear();
+
+                    for (int x = 0; x < 1024; x++)
+                    {
+                        foreach (var temp in waveTemp[x])
+                            wave[x].Add(temp);
+                        waveTemp[x].Clear();
+                    }
+
+                    workerCPA.RunWorkerAsync();
+                   // workerCPA.WorkerReportsProgress();
+                }
                 if (worker.CancellationPending || error) 
             break;
 
