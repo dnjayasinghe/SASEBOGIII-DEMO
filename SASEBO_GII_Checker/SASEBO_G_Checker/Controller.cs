@@ -106,6 +106,8 @@ namespace SASEBO_G_Checker
         int waveLowLim  = 100;
         int waveUpLim   = 200;
 
+        List<float>[] cpa = new List<float>[256];
+
         //************************************************ Method
         //------------------------------------------------ Constructor
         public Controller(CipherModule.IBlockCipher module, int num_trace, string key_st, int samples, bool multipleAES/*, int Delay*/)
@@ -153,6 +155,7 @@ namespace SASEBO_G_Checker
             {
                 cipherHD[i] = new List<int>();
                 cipherDST[i] = new List<float>();
+                cpa[i] = new List<float>();
 
             }
         }
@@ -295,8 +298,11 @@ namespace SASEBO_G_Checker
 
             Console.Write("**"+corrCoe.Max().ToString("0.0000")+"**"  + corrCoe[74].ToString("0.0000") + "    ");
             for (int key = 0; key < 256; key++)
-                Console.Write(key + "=>" + corrCoe[key].ToString("0.0000") +"   ");
-
+            {
+                Console.Write(key + "=>" + corrCoe[key].ToString("0.0000") + "   ");
+                cpa[key].Add((float)Math.Round((double)corrCoe[key], 4));
+                //cpa[key].Add(key);
+            }
 
                 Console.WriteLine("CPA finished");
 
@@ -322,6 +328,7 @@ namespace SASEBO_G_Checker
      // int delayTime = Delay;
 	  int sampleLength = samples;
       bool error   = false;
+      bool CPAPlot = false;
 
       byte[] text_in  = new byte[16];
       byte[] text_out = new byte[16];
@@ -343,7 +350,7 @@ namespace SASEBO_G_Checker
      // string path = @"D:\sanjana_laptop\downloads\PlainText_1000000.txt";  //@"E:\VS\plaintexts\pt_9000.txt"; //pt_117000
       // Main loop
       progress = 0;
-      worker.ReportProgress(progress, (object)(new ControllerReport(loop, text_in, text_out, text_ans, byte_trace)));
+      worker.ReportProgress(progress, (object)(new ControllerReport(loop, text_in, text_out, text_ans, byte_trace, CPAPlot, cpa)));
 
             // myWriter.WriteLine(BitConverter.ToString(key).Replace("-", " "));
 
@@ -378,12 +385,18 @@ namespace SASEBO_G_Checker
         hw.readText (text_out, 16);
         hw.readTrace(byte_trace, 1024);
 
-             //   for (int z = 0; z < 1024; z++)
-           //     Debug.Write(byte_trace[z] + " ");
-           //Debug.Write( "\n");
+                //   for (int z = 0; z < 1024; z++)
+                //     Debug.Write(byte_trace[z] + " ");
+                //Debug.Write( "\n");
 
-        worker.ReportProgress(progress, (object)(new ControllerReport(loop, text_in, text_out, text_ans, byte_trace)));
-        System.Threading.Thread.Sleep(10);
+                if(loop % 200 == 0)
+                    CPAPlot = true;
+                else
+                    System.Threading.Thread.Sleep(20);
+
+                worker.ReportProgress(progress, (object)(new ControllerReport(loop, text_in, text_out, text_ans, byte_trace, CPAPlot, cpa)));
+        
+                CPAPlot = false;
 
                 // update cihper
                 cipherTemp.Add(text_out[0]);
@@ -430,7 +443,7 @@ namespace SASEBO_G_Checker
       if (worker.CancellationPending) 
           error = true;
       
-      worker.ReportProgress(progress, (object)(new ControllerReport(loop, text_in, text_out, text_ans, byte_trace)));
+      worker.ReportProgress(progress, (object)(new ControllerReport(loop, text_in, text_out, text_ans, byte_trace, CPAPlot, cpa)));
       return error;
     }
 
@@ -445,17 +458,23 @@ namespace SASEBO_G_Checker
     public byte[] text_out;
     public byte[] text_ans;
     public byte[] trace;
+    public bool CPAPlot;
+    public List<float>[] cpa;
+
 
    // public int multipleAES;    //public Series  s;   // series = this.chart1.Series.Add("Trace");
 
         //------------------------------------------------ Constructor
-        public ControllerReport(int num_trace, byte[] text_in, byte[] text_out, byte[] text_ans, byte[] trace)
+        public ControllerReport(int num_trace, byte[] text_in, byte[] text_out, byte[] text_ans, byte[] trace, bool CPAPlot, List<float>[] cpa)
     {
       this.num_trace = num_trace;
       this.text_in  = (byte[])text_in.Clone();
       this.text_out = (byte[])text_out.Clone();
       this.text_ans = (byte[])text_ans.Clone();
       this.trace    = (byte[])trace.Clone();
+      this.CPAPlot  = (bool)CPAPlot;
+      this.cpa      = (List<float>[]) cpa;
+
       //this.multipleAES  = mu
             //this.s        = (Series)s; 
         }

@@ -29,9 +29,7 @@ namespace SASEBO_G_Checker
     /// </summary>
     private void InitializeComponent()
     {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-            System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             this.tbox_numtrace = new System.Windows.Forms.TextBox();
             this.lb_fixed_numtrace = new System.Windows.Forms.Label();
             this.button_start = new System.Windows.Forms.Button();
@@ -277,17 +275,12 @@ namespace SASEBO_G_Checker
             // 
             // chartCPA
             // 
-            chartArea1.Name = "ChartArea1";
-            this.chartCPA.ChartAreas.Add(chartArea1);
+            this.chartCPA.BorderlineColor = System.Drawing.Color.Maroon;
             legend1.Name = "Legend1";
             this.chartCPA.Legends.Add(legend1);
-            this.chartCPA.Location = new System.Drawing.Point(1327, 9);
+            this.chartCPA.Location = new System.Drawing.Point(1308, 12);
             this.chartCPA.Name = "chartCPA";
-            series1.ChartArea = "ChartArea1";
-            series1.Legend = "Legend1";
-            series1.Name = "Series1";
-            this.chartCPA.Series.Add(series1);
-            this.chartCPA.Size = new System.Drawing.Size(626, 369);
+            this.chartCPA.Size = new System.Drawing.Size(680, 366);
             this.chartCPA.TabIndex = 114;
             this.chartCPA.Text = "chart2";
             this.chartCPA.Click += new System.EventHandler(this.chartCPA_Click);
