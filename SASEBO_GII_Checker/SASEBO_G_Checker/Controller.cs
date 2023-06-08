@@ -296,10 +296,10 @@ namespace SASEBO_G_Checker
                 
             }
 
-            Console.Write("**"+corrCoe.Max().ToString("0.0000")+"**"  + corrCoe[74].ToString("0.0000") + "    ");
+            //Console.Write("**"+corrCoe.Max().ToString("0.0000")+"**"  + corrCoe[74].ToString("0.0000") + "    ");
             for (int key = 0; key < 256; key++)
             {
-                Console.Write(key + "=>" + corrCoe[key].ToString("0.0000") + "   ");
+               // Console.Write(key + "=>" + corrCoe[key].ToString("0.0000") + "   ");
                 cpa[key].Add((float)Math.Round((double)corrCoe[key], 4));
                 //cpa[key].Add(key);
             }
@@ -333,7 +333,7 @@ namespace SASEBO_G_Checker
       byte[] text_in  = new byte[16];
       byte[] text_out = new byte[16];
       byte[] text_ans = new byte[16];
-
+      byte[] Rkey     = new byte[16];
       byte[] byte_trace = new byte[1024];
 
 
@@ -344,13 +344,16 @@ namespace SASEBO_G_Checker
 
             // Initialization
             hw.setKey(key, 16); // Hardware
-            sw.setKey(key);     // Software 
+            sw.setKey(key);     // Software
+            Rkey = sw.getKey();
+
+            //Console.WriteLine(Rkey[0]);
       
 	  //string path = @"E:\VS\plaintexts\pt_9000.txt";
      // string path = @"D:\sanjana_laptop\downloads\PlainText_1000000.txt";  //@"E:\VS\plaintexts\pt_9000.txt"; //pt_117000
       // Main loop
       progress = 0;
-      worker.ReportProgress(progress, (object)(new ControllerReport(loop, text_in, text_out, text_ans, byte_trace, CPAPlot, cpa)));
+      worker.ReportProgress(progress, (object)(new ControllerReport(loop, text_in, text_out, text_ans, byte_trace, CPAPlot, cpa, Rkey[0])));
 
             // myWriter.WriteLine(BitConverter.ToString(key).Replace("-", " "));
 
@@ -394,7 +397,7 @@ namespace SASEBO_G_Checker
                 else
                     System.Threading.Thread.Sleep(20);
 
-                worker.ReportProgress(progress, (object)(new ControllerReport(loop, text_in, text_out, text_ans, byte_trace, CPAPlot, cpa)));
+                worker.ReportProgress(progress, (object)(new ControllerReport(loop, text_in, text_out, text_ans, byte_trace, CPAPlot, cpa, Rkey[0])));
         
                 CPAPlot = false;
 
@@ -443,7 +446,7 @@ namespace SASEBO_G_Checker
       if (worker.CancellationPending) 
           error = true;
       
-      worker.ReportProgress(progress, (object)(new ControllerReport(loop, text_in, text_out, text_ans, byte_trace, CPAPlot, cpa)));
+      worker.ReportProgress(progress, (object)(new ControllerReport(loop, text_in, text_out, text_ans, byte_trace, CPAPlot, cpa, Rkey[0])));
       return error;
     }
 
@@ -460,12 +463,13 @@ namespace SASEBO_G_Checker
     public byte[] trace;
     public bool CPAPlot;
     public List<float>[] cpa;
+    public byte attackKey;
 
 
    // public int multipleAES;    //public Series  s;   // series = this.chart1.Series.Add("Trace");
 
         //------------------------------------------------ Constructor
-        public ControllerReport(int num_trace, byte[] text_in, byte[] text_out, byte[] text_ans, byte[] trace, bool CPAPlot, List<float>[] cpa)
+        public ControllerReport(int num_trace, byte[] text_in, byte[] text_out, byte[] text_ans, byte[] trace, bool CPAPlot, List<float>[] cpa, byte attackKey)
     {
       this.num_trace = num_trace;
       this.text_in  = (byte[])text_in.Clone();
@@ -474,9 +478,10 @@ namespace SASEBO_G_Checker
       this.trace    = (byte[])trace.Clone();
       this.CPAPlot  = (bool)CPAPlot;
       this.cpa      = (List<float>[]) cpa;
+      this.attackKey = (byte)attackKey;
 
       //this.multipleAES  = mu
-            //this.s        = (Series)s; 
+      //this.s        = (Series)s; 
         }
   }
   

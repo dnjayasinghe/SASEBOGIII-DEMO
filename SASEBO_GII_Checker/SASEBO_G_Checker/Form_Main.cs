@@ -53,6 +53,7 @@ namespace SASEBO_G_Checker
     bool check;// = false;
     bool CPAPlot;
     List<float>[] cpa;
+    byte attackKey;
 
         //************************************************ Method
         //------------------------------------------------ Constructor
@@ -160,7 +161,7 @@ namespace SASEBO_G_Checker
 
                 seriesCPA[i].ChartType = SeriesChartType.Line;  // type
                 seriesCPA[i].BorderWidth = 1;
-                seriesCPA[i].Color = Color.FromArgb(40, Color.Green);
+                seriesCPA[i].Color = Color.FromArgb(60, Color.Green);
                 seriesCPA[i].XValueType = ChartValueType.Int32;//x axis type
                 seriesCPA[i].YValueType = ChartValueType.Double;//y axis type
                 seriesCPA[i].IsVisibleInLegend = false;
@@ -237,6 +238,7 @@ namespace SASEBO_G_Checker
       Trace_data = ((ControllerReport)e.UserState).trace;
       CPAPlot = ((ControllerReport)e.UserState).CPAPlot;
       cpa = (List<float>[])((ControllerReport)e.UserState).cpa;
+      attackKey= ((ControllerReport)e.UserState).attackKey;
 
 
             // chart1.Series.Add("1");
@@ -265,7 +267,7 @@ namespace SASEBO_G_Checker
                         seriesCPA[key].Points.AddXY((index+1) * 200, cpa[key][index]);
 
                     }
-                    seriesCPA[74].Color = Color.FromArgb(255, Color.Red);
+                    seriesCPA[attackKey].Color = Color.FromArgb(255, Color.Red);
                     //  chartCPA.ChartAreas[0].RecalculateAxesScale();
                     //  chartCPA.Update();
                 }
