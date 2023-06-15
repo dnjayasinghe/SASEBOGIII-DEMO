@@ -213,7 +213,7 @@ namespace SASEBO_G_Checker
         private void worker_DoWorkCPA(object sender, DoWorkEventArgs e)
   {
 
-            Console.WriteLine("CPA calculating");
+          //  Console.WriteLine("CPA calculating");
 
             // clean lists;
             double[] cipherMeanArray = new double[256];
@@ -252,7 +252,7 @@ namespace SASEBO_G_Checker
                 }
                 DevCipher[key]          = (double)Math.Sqrt((double)SumCipher2 / cipher.Count - cipherMeanArray[key] * cipherMeanArray[key]);
             }
-            Console.WriteLine(cipher.Count +"   "+ cipherHD[0].Count);
+           // Console.WriteLine(cipher.Count +"   "+ cipherHD[0].Count);
 
 
             // wave 
@@ -304,7 +304,7 @@ namespace SASEBO_G_Checker
                 //cpa[key].Add(key);
             }
 
-                Console.WriteLine("CPA finished");
+              //  Console.WriteLine("CPA finished");
 
         }
 
@@ -395,7 +395,7 @@ namespace SASEBO_G_Checker
                 if(loop % 200 == 0)
                     CPAPlot = true;
                 else
-                    System.Threading.Thread.Sleep(20);
+                    System.Threading.Thread.Sleep(10);
 
                 worker.ReportProgress(progress, (object)(new ControllerReport(loop, text_in, text_out, text_ans, byte_trace, CPAPlot, cpa, Rkey[0])));
         

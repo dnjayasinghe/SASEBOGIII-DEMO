@@ -161,7 +161,7 @@ namespace SASEBO_G_Checker
 
                 seriesCPA[i].ChartType = SeriesChartType.Line;  // type
                 seriesCPA[i].BorderWidth = 1;
-                seriesCPA[i].Color = Color.FromArgb(60, Color.Green);
+                seriesCPA[i].Color = Color.FromArgb(50, Color.Green);
                 seriesCPA[i].XValueType = ChartValueType.Int32;//x axis type
                 seriesCPA[i].YValueType = ChartValueType.Double;//y axis type
                 seriesCPA[i].IsVisibleInLegend = false;
