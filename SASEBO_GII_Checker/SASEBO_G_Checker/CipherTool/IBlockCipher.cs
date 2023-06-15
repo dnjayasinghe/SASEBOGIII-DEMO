@@ -38,5 +38,7 @@ namespace CipherTool
 		void setKey (byte[] key);
 		byte[] encrypt (byte[] pt);
 		byte[] decrypt (byte[] ct);
-	}
+
+        byte[] getKey();
+    }
 }

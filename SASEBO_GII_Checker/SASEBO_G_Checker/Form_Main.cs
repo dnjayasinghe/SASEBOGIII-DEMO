@@ -31,6 +31,7 @@
  -------------------------------------------------------------------------*/
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO.Ports;
@@ -46,9 +47,13 @@ namespace SASEBO_G_Checker
     Manager manager;
     Random rand;
     Series series1;
-    ChartArea chartArea;
+        Series[] seriesCPA;
+    ChartArea chartArea, chatCPAarea;
     byte[] Trace_data;
-        bool check;// = false;
+    bool check;// = false;
+    bool CPAPlot;
+    List<float>[] cpa;
+    byte attackKey;
 
         //************************************************ Method
         //------------------------------------------------ Constructor
@@ -130,6 +135,55 @@ namespace SASEBO_G_Checker
             series1 = new Series();
             series1.ChartArea = "First Area";
             chart1.Series.Add(series1);
+
+
+
+            
+
+
+            chatCPAarea = new ChartArea();
+            chatCPAarea.Name = "CPA Plots";
+            chartCPA.ChartAreas.Add(chatCPAarea);
+            chatCPAarea.AxisX.MajorGrid.Enabled = false;
+            chatCPAarea.AxisX.Title = @"Number of Samples";
+            chatCPAarea.AxisY.Title = @"Pearson Correlation Coefficient";
+
+            //chatCPAarea.AxisY.Maximum = 1.0;
+            //chatCPAarea.AxisY.Minimum = 0.0;
+            seriesCPA = new Series[256];
+            for (int i = 0; i < 256; i++)
+            {
+                seriesCPA[i] = new Series();
+
+                seriesCPA[i].Name = @"series：Test One" +i;
+                chartCPA.Series.Add(seriesCPA[i]);
+
+
+                seriesCPA[i].ChartType = SeriesChartType.Line;  // type
+                seriesCPA[i].BorderWidth = 1;
+                seriesCPA[i].Color = Color.FromArgb(50, Color.Green);
+                seriesCPA[i].XValueType = ChartValueType.Int32;//x axis type
+                seriesCPA[i].YValueType = ChartValueType.Double;//y axis type
+                seriesCPA[i].IsVisibleInLegend = false;
+
+                seriesCPA[i].IsVisibleInLegend = false;
+            }
+
+            chartCPA.ChartAreas[0].AxisX.Minimum = double.NaN;
+            chartCPA.ChartAreas[0].AxisX.Maximum = double.NaN;
+            chartCPA.ChartAreas[0].AxisX.Interval = double.NaN;
+            chartCPA.ChartAreas[0].AxisY.Minimum = double.NaN;
+            chartCPA.ChartAreas[0].AxisY.Maximum = double.NaN;
+
+
+            //seriesCPA.
+            // numUD_Graph_Xmin.Enabled = false;
+            // numUD_Graph_Xmax.Enabled = false;
+            // numUD_Graph_XInterval.Enabled = false;
+            // numUD_Graph_Ymin.Enabled = false;
+            // numUD_Graph_Ymax.Enabled = false;
+
+
         }
 
     //************************************************ Control
@@ -182,10 +236,15 @@ namespace SASEBO_G_Checker
       label_text_ans.Text = format(((ControllerReport)e.UserState).text_ans);
  
       Trace_data = ((ControllerReport)e.UserState).trace;
+      CPAPlot = ((ControllerReport)e.UserState).CPAPlot;
+      cpa = (List<float>[])((ControllerReport)e.UserState).cpa;
+      attackKey= ((ControllerReport)e.UserState).attackKey;
+
 
             // chart1.Series.Add("1");
             // string[] seriesArray = { "Cat", "Dog", "Bird", "Monkey" };
             //int[] pointsArray = { 2, 1, 7, 5 };
+            // series1.Points.Invalidate();
             series1.Points.Clear();
             //float[] values = { 0, 70, 90, 20, 70, 220, 30, 60, 30, 81, 10, 39, 0, 70, 90, 20, 70, 220, 30, 60, 30, 81, 10, 39, 0, 70, 90, 20, 70, 220, 30, 60, 30, 81, 10, 39, 0, 70, 90, 20, 70, 220, 30, 60, 30, 81, 10, 39 };
 
@@ -194,6 +253,27 @@ namespace SASEBO_G_Checker
                 series1.Points.AddXY(i, Trace_data[i]);
                
             }
+
+
+            if (CPAPlot == true && cpa[0].Count > 0)
+            {
+                for (int key = 0; key < 256; key++)
+                {
+                    //seriesCPA[key].Points.Clear();
+                    //for (int i = 0; i < cpa[0].Count; i++)
+                    int index = cpa[0].Count - 1;
+                    {
+                        // series1.Points.AddXY((i + 1) * 200, 0.01);
+                        seriesCPA[key].Points.AddXY((index+1) * 200, cpa[key][index]);
+
+                    }
+                    seriesCPA[attackKey].Color = Color.FromArgb(255, Color.Red);
+                    //  chartCPA.ChartAreas[0].RecalculateAxesScale();
+                    //  chartCPA.Update();
+                }
+            }
+            
+
 
         }
 
@@ -236,5 +316,9 @@ namespace SASEBO_G_Checker
             manager.set_delay((int)numericUpDown1.Value);
         }
 
+        private void chartCPA_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

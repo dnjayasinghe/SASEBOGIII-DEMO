@@ -29,6 +29,7 @@ namespace SASEBO_G_Checker
     /// </summary>
     private void InitializeComponent()
     {
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.tbox_numtrace = new System.Windows.Forms.TextBox();
             this.lb_fixed_numtrace = new System.Windows.Forms.Label();
             this.button_start = new System.Windows.Forms.Button();
@@ -49,8 +50,10 @@ namespace SASEBO_G_Checker
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
+            this.chartCPA = new System.Windows.Forms.DataVisualization.Charting.Chart();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chartCPA)).BeginInit();
             this.SuspendLayout();
             // 
             // tbox_numtrace
@@ -209,7 +212,7 @@ namespace SASEBO_G_Checker
             this.tb_key.Name = "tb_key";
             this.tb_key.Size = new System.Drawing.Size(523, 26);
             this.tb_key.TabIndex = 107;
-            this.tb_key.Text = "01 23 45 67 89 AB CD EF 12 34 56 78 9A BC DE F0";
+            this.tb_key.Text = "00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E F0";
             // 
             // samples
             // 
@@ -236,7 +239,7 @@ namespace SASEBO_G_Checker
             this.chart1.Location = new System.Drawing.Point(723, 9);
             this.chart1.Margin = new System.Windows.Forms.Padding(4);
             this.chart1.Name = "chart1";
-            this.chart1.Size = new System.Drawing.Size(787, 369);
+            this.chart1.Size = new System.Drawing.Size(550, 369);
             this.chart1.TabIndex = 110;
             this.chart1.Text = "chart1";
             this.chart1.Click += new System.EventHandler(this.chart1_Click);
@@ -269,13 +272,25 @@ namespace SASEBO_G_Checker
             this.label1.Size = new System.Drawing.Size(89, 17);
             this.label1.TabIndex = 113;
             this.label1.Text = "Offset Adjust";
-            this.label1.Click += new System.EventHandler(this.label1_Click);
+            // 
+            // chartCPA
+            // 
+            this.chartCPA.BorderlineColor = System.Drawing.Color.Maroon;
+            legend1.Name = "Legend1";
+            this.chartCPA.Legends.Add(legend1);
+            this.chartCPA.Location = new System.Drawing.Point(1308, 12);
+            this.chartCPA.Name = "chartCPA";
+            this.chartCPA.Size = new System.Drawing.Size(680, 366);
+            this.chartCPA.TabIndex = 114;
+            this.chartCPA.Text = "chart2";
+            this.chartCPA.Click += new System.EventHandler(this.chartCPA_Click);
             // 
             // Form_Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1559, 422);
+            this.ClientSize = new System.Drawing.Size(2000, 422);
+            this.Controls.Add(this.chartCPA);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.numericUpDown1);
             this.Controls.Add(this.checkBox1);
@@ -303,6 +318,7 @@ namespace SASEBO_G_Checker
             this.Load += new System.EventHandler(this.Form_Controller_Load);
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.chartCPA)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -330,6 +346,7 @@ namespace SASEBO_G_Checker
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.NumericUpDown numericUpDown1;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chartCPA;
         //     private System.Windows.Forms.Label Delay;
         //     private System.Windows.Forms.TextBox tb_Delay;
     }

@@ -116,6 +116,12 @@ namespace CipherTool
 					key_round[i/4][(i%4)*4+j] = w[i, j];
 		}
 
+        public byte[] getKey()
+        {
+            
+            return key_round[10];
+        }
+
 		//------------------------------------------------ encrypt()
 		public byte[] encrypt(byte[] pt)
 		{
